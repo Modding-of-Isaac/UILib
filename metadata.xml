@@ -1,8 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-	<name>UILib</name>
-	<directory>ui_lib</directory>
-	<description/>
-	<version>1.0</version>
-	<visibility/>
-</metadata>
+    <name>UILib</name>
+    <directory>ui_lib</directory>
+    <id>1508979151</id>
+    <description>This library allows developers to work with UI a bit easier.
 
+Current features:
+- Create (albeit imperfect) achievement-like popups
+
+Planned Features:
+- Custom menus</description>
+    <version>1.1</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Graphics"/>
+</metadata>

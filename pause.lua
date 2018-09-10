@@ -1,12 +1,9 @@
-local FreezeMain = true
-
 -- Credits to AgentCucco, toggles freeze
 
-return function()
-    FreezeMain = not FreezeMain
+return function(doFreeze)
     local player = Isaac.GetPlayer(0)-- get player data
     local entities = Isaac.GetRoomEntities()
-    if FreezeMain == true then
+    if not doFreeze then
         for i,v in pairs(entities) do
             if v:HasEntityFlags(EntityFlag.FLAG_FREEZE) then
                 entities[i]:RemoveStatusEffects()

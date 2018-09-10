@@ -25,7 +25,7 @@ UILib = {
         achievement:LoadGraphics()
         render = true
 
-        UILib.togglePause()
+        UILib.togglePause(true)
     end,
 
     checkButton = function()
@@ -34,7 +34,7 @@ UILib = {
             if render and (Input.IsButtonPressed(Keyboard.KEY_ENTER, 0) or Input.IsActionPressed(ButtonAction.ACTION_MENUCONFIRM, player.ControllerIndex)) then
                 render = false
                 player.ControlsEnabled = true
-                UILib.togglePause()
+                UILib.togglePause(false)
                 return false
             elseif render then
                 player.ControlsEnabled = false

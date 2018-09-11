@@ -1,48 +1,57 @@
 local achievement = Sprite()
 
+local gfxQueue = {}
+
 local render = false
-local gfxUsed = "blank_entry.png"
 local setup = false
 
 UILib = {
     togglePause = require("pause.lua"),
 
-    display = function()
+    _display = function()
         if not setup then
             setup = true
-            achievement:Load("gfx/ui/achievement/achievement.anm2", true)
-            achievement:Play(achievement:GetDefaultAnimation(), true)
+            achievement:Load("gfx/ui/achievement/achievements.anm2", true)
         end
 
         if render then
+            if achievement:IsFinished("Appear") then
+                achievement:Play("Idle", true)
+            end
+
+            if achievement:IsFinished("Dissapear") then
+                render = false
+                -- Resume
+                local player = Isaac.GetPlayer(0)
+                player.ControlsEnabled = true
+                UILib.togglePause(false)
+            end
+
             achievement:Update()
-            achievement:Render(Vector(120, 60), Vector(0, 0), Vector(0, 0))
+            local roomCenter = (Game():GetRoom():GetRenderSurfaceTopLeft()*2 + Vector(442,286))/2  -- "Kube's magic formula" - Nine
+            achievement:Render(roomCenter, Vector(0, 0), Vector(0, 0))
+        end
+    end,
+
+    _preventDamage = function(_, tookDamage)
+        if render then
+            return false
         end
     end,
 
     displayAchievement = function(gfx)
-        achievement:ReplaceSpritesheet(1, "gfx/ui/achievement/"..gfx)
+        achievement:ReplaceSpritesheet(3, "gfx/ui/achievement/"..gfx)
         achievement:LoadGraphics()
+        achievement:Play("Appear", true)
+		local player = Isaac.GetPlayer(0)
+		player.ControlsEnabled = false
+		
         render = true
 
         UILib.togglePause(true)
-    end,
-
-    checkButton = function()
-        local player = Isaac.GetPlayer(0)
-        if player ~= nil then
-            if render and (Input.IsButtonPressed(Keyboard.KEY_ENTER, 0) or Input.IsActionPressed(ButtonAction.ACTION_MENUCONFIRM, player.ControllerIndex)) then
-                render = false
-                player.ControlsEnabled = true
-                UILib.togglePause(false)
-                return false
-            elseif render then
-                player.ControlsEnabled = false
-            end
-        end
     end
 }
 
 local mod = RegisterMod("UILib", 1)
-mod:AddCallback(ModCallbacks.MC_POST_RENDER, UILib.display)
-mod:AddCallback(ModCallbacks.MC_INPUT_ACTION, UILib.checkButton)
+mod:AddCallback(ModCallbacks.MC_POST_RENDER, UILib._display)
+mod:AddCallback(ModCallbacks.MC_ENTITY_TAKE_DMG, UILib._preventDamage)
